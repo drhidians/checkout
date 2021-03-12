@@ -1,0 +1,178 @@
+openapi: 3.0.0
+info:
+  description: |
+    The Pricing Rules API manages a pricing rules of items
+  title: Pricing Rules API
+  version: 1.0.0
+servers:
+- url: https://checkout.api/pricing-rules
+- url: http://checkout.api/pricing-rules
+- url: http://localhost:8000/pricing-rules
+tags:
+- description: Manage a pricing rules of items
+  name: PricingRules
+paths:
+  /pricing-rules:
+    post:
+      operationId: resetPricingRules
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyNewPricingRulesRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplyNewPricingRuleResponse'
+          description: New Pricing Rules Successfully applied
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: The request did not pass the business validation rules
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      summary: reset pricing rules
+      tags:
+      - PricingRules
+  /common-pricing-rules:
+    post:
+      operationId: resetCommonPricingRules
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyNewCommonPricingRulesRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplyNewPricingRuleResponse'
+          description: New Common Pricing Rules Successfully applied
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: The request did not pass the business validation rules
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unexpected error
+      summary: reset common pricing rules
+      tags:
+      - PricingRules
+components:
+  responses:
+    Error:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      description: Unexpected error
+    InvalidRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      description: Invalid request
+    ValidationError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      description: The request did not pass the business validation rules
+    NotFound:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      description: The resource cannot be found
+  schemas:
+    Error:
+      example:
+        type: about:blank
+        title: Not Found
+        status: 404
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+      required:
+      - type
+      type: object
+    PricingRule:
+      example:
+        rule: 0
+        weight: 6
+        sku: sku
+      properties:
+        rule:
+          type: integer
+        sku:
+          type: string
+        weight:
+          type: integer
+      required:
+      - rule
+      - sku
+      - weight
+      type: object
+    ApplyNewPricingRulesRequest:
+      items:
+        $ref: '#/components/schemas/PricingRule'
+      type: array
+    ApplyNewCommonPricingRulesRequest:
+      items:
+        $ref: '#/components/schemas/PricingRule'
+      type: array
+    CommonPricingRule:
+      properties:
+        rule:
+          type: integer
+        weight:
+          type: integer
+      required:
+      - rule
+      - weight
+      type: object
+    ApplyNewPricingRuleResponse:
+      example:
+        count: 0
+      properties:
+        count:
+          type: integer
+      required:
+      - count
+      type: object

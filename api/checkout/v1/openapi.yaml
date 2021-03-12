@@ -1,0 +1,103 @@
+openapi: 3.0.0
+
+info:
+  title: Checkout API
+  description: |
+    The Checkout API manages checkout items
+  version: 1.0.0
+
+servers:
+  -   url: https://checkout.api/checkout
+  -   url: http://checkout.api/checkout
+  -   url: http://localhost:8000/checkout
+
+tags:
+  -   name: Checkout
+      description: Manage checkout items
+
+paths:
+  /checkout:
+    post:
+      summary: checkout
+      operationId: checkout
+      tags: [Checkout]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckoutRequest"
+        required: true
+      responses:
+        "204":
+          description: "Product was added successfully"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        default:
+          $ref: "#/components/responses/Error"
+components:
+  responses:
+    Error:
+      description: "Unexpected error"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    InvalidRequest:
+      description: "Invalid request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    ValidationError:
+      description: "The request did not pass the business validation rules"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: "The resource cannot be found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+      required:
+        - type
+      example:
+        type: about:blank
+        title: Not Found
+        status: 404
+
+    Product:
+      type: object
+      properties:
+        sku:
+          type: string
+        quantity:
+          type: integer
+      required:
+        - sku
+        - quantity
+    CheckoutRequest:
+      type: array
+      items:
+        $ref: "#/components/schemas/Product"

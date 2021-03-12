@@ -1,0 +1,121 @@
+openapi: 3.0.0
+
+info:
+  title: Pricing Rules API
+  description: |
+    The Pricing Rules API manages a pricing rules of items
+  version: 1.0.0
+
+servers:
+  -   url: https://checkout.api/pricing-rules
+  -   url: http://checkout.api/pricing-rules
+  -   url: http://localhost:8000/pricing-rules
+
+tags:
+  -   name: PricingRules
+      description: Manage a pricing rules of items
+
+paths:
+  /pricing-rules:
+    post:
+      summary: reset pricing rules
+      operationId: resetPricingRules
+      tags: [PricingRules]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplyNewPricingRulesRequest"
+        required: true
+      responses:
+        "204":
+          description: "Product added successfully"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        default:
+          $ref: "#/components/responses/Error"
+
+components:
+  responses:
+    Error:
+      description: "Unexpected error"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    InvalidRequest:
+      description: "Invalid request"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: "The resource cannot be found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+      required:
+        - type
+      example:
+        type: about:blank
+        title: Not Found
+        status: 404
+
+    PricingRule:
+      type: object
+      properties:
+        rule:
+          type: integer
+        sku:
+          type: string
+        weight:
+          type: integer
+      required:
+        - rule
+        - weight
+        - sku
+    ApplyNewPricingRulesRequest:
+      type: array
+      items:
+        $ref: "#/components/schemas/PricingRule"
+    ApplyNewCommonPricingRulesRequest:
+      type: array
+      items:
+        $ref: "#/components/schemas/PricingRule"
+
+    CommonPricingRule:
+      type: object
+      properties:
+        rule:
+          type: integer
+        weight:
+          type: integer
+      required:
+        - rule
+        - weight
+
+    ApplyNewPricingRuleResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+      required:
+        - count
