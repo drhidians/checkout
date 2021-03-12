@@ -1,0 +1,5 @@
+package pricingrules
+
+func NewMultiPriceDiscountRule() {
+
+}
